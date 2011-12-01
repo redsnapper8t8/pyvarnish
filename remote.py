@@ -2,33 +2,31 @@
 __author__ = 'John Moylan'
 from paramiko import SSHClient, SSHConfig, AutoAddPolicy
 
+from settings import SSH_CONFIG
+
 
 class Varnish_admin():
 
-    def __init__(self, server='', cmd='varnishstat -x'):
+    def __init__(self, server=''):
         self.server = server
-        self.cmd = cmd
+        self.conf = self.config()
 
-    def conf(self):
+    def config(self):
         sshconfig = SSHConfig()
-        sshconfig.parse(open('/home/john/.ssh/config'))
+        sshconfig.parse(open("/home/john/.ssh/config"))
         return sshconfig.lookup(self.server)
 
-    def varnishstat(self):
+    def runcmd(self, cmd):
         try:
             client = SSHClient()
             client.load_system_host_keys()
             #client.set_missing_host_key_policy(AutoAddPolicy())
-            mconf = self.conf()
-            print mconf
-            client.connect(mconf['hostname'],
-                            port = int(mconf['port']),
-                            username = mconf['user'],
-                            key_filename = mconf['identityfile'],
+            client.connect(self.conf['hostname'],
+                            port = int(self.conf['port']),
+                            username = self.conf['user'],
+                            key_filename = self.conf['identityfile'],
                             password = None,)
-            stdin, stdout, stderr = client.exec_command(self.cmd)
-            data = ''.join([i.rstrip('\r\n ').lstrip() for i in stdout.readlines()])
-            return data
+            stdin, stdout, stderr = client.exec_command(cmd)
+            return ''.join([i.rstrip('\r\n ').lstrip() for i in stdout.readlines()])
         finally:
             client.close()
-
