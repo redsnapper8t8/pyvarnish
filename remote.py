@@ -13,14 +13,14 @@ class Varnish_admin():
 
     def config(self):
         sshconfig = SSHConfig()
-        sshconfig.parse(open("/home/john/.ssh/config"))
+        sshconfig.parse(open(SSH_CONFIG))
         return sshconfig.lookup(self.server)
 
     def runcmd(self, cmd):
         try:
             client = SSHClient()
             client.load_system_host_keys()
-            #client.set_missing_host_key_policy(AutoAddPolicy())
+            client.set_missing_host_key_policy(AutoAddPolicy())
             client.connect(self.conf['hostname'],
                             port = int(self.conf['port']),
                             username = self.conf['user'],

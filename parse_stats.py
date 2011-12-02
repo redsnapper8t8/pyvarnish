@@ -30,29 +30,31 @@ class VarnishGather():
         for node in root:
             for stat in  node:
                 if stat.tag == "name" and stat.getnext().tag == "value":
-                    self.lines.append('varnish8.%s.%s %s %d' % (self.server_name, stat.text,
+                    self.lines.append('varnish.%s.%s %s %d' % (self.server_name, stat.text,
                             stat.getnext().text, int(epochstamp)))
 
     def parse_sysctl(self, input):
         epochstamp = int(time.time())
-        key = "varnish8.%s.%s_current" % (self.server_name, input.split()[0].replace('.','_'))
+        key = "varnish.%s.%s_current" % (self.server_name, input.split()[0].replace('.','_'))
         value = input.split()[2]
         #append current useage
         self.lines.append("%s %s %d" % (key, value, epochstamp))
 
-        key = "varnish8.%s.%s_total" % (self.server_name, input.split()[0].replace('.','_'))
-        value = input.split()[3]
+        key = "varnish.%s.%s_total" % (self.server_name, input.split()[0].replace('.','_'))
+        value = input.split()[4]
         #append total useage
         self.lines.append("%s %s %d" % (key, value, epochstamp))
 
-    @property
-    def message(self):
-        return '\n'.join(self.lines) + '\n' #all lines must end in a newline
 
 
+
+
+def msg(message):
+    return '\n'.join(message) + '\n'
 
 
 def main():
+
     for server in VARNISH_SERVERS:
         #connect to server
         vserver = Varnish_admin(server)
@@ -60,6 +62,7 @@ def main():
         #run command
         data = vserver.runcmd("varnishstat -x")
 
+        #print data
         xml = StringIO(data)
 
         vg = VarnishGather(server)
@@ -68,17 +71,20 @@ def main():
         vg.parse_xml(xml)
 
         #get fildescriptors counter
-        #vg.lines = []
-        data = vserver.runcmd("sysctl fs.file-nr")
-        vg.parse_sysctl(data)
-        print vg.message
+        vg.parse_sysctl(vserver.runcmd("sysctl fs.file-nr"))
+
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock = socket()
-            #sock.sendto( vg.message, (CARBON_SERVER, CARBON_PORT) )
-            sock.connect(vg.message, (CARBON_SERVER, CARBON_PORT) )
+
+            for i in range(0, len(vg.lines), 50):
+                sock.sendto( msg(vg.lines[i:i+50]), (CARBON_SERVER, CARBON_PORT) )
+        except:
+            import sys, traceback
+            print "failed"
+            traceback.print_exc(file=sys.stdout)
         finally:
             sock.close()
+
 
 if __name__ == "__main__":
     main()
