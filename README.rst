@@ -13,7 +13,7 @@ Screenshots
 
 Status
 ------
-This software is used in production and works. Documentation however is a work
+This software is used in production and works. Documentation and tests are a work
 in progress. If you have any questions please feel free to contact me. Any
 contributions are also welcomed.
 
