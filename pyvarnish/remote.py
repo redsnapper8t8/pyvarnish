@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'John Moylan'
+
+import sys
+
 from paramiko import SSHClient, SSHConfig, AutoAddPolicy
 
 from pyvarnish.settings import SSH_CONFIG
@@ -13,7 +16,12 @@ class Varnish_admin():
 
     def config(self):
         sshconfig = SSHConfig()
-        sshconfig.parse(open(SSH_CONFIG))
+        try:
+            sshconfig.parse(open(SSH_CONFIG))
+        except IOError:
+            print "your app needs to have a valid " \
+                  "ssh config file location in settings.py"
+            sys.exit(1)
         return sshconfig.lookup(self.server)
 
     def runcmd(self, cmd):
