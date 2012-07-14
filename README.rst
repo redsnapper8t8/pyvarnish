@@ -49,12 +49,12 @@ varnish server.
 ``command="/usr/local/bin/graphitewrapper.sh",no-port-forwarding,no-X11-forwarding,no-pty ssh-rsa  publickey```
 
 
-/usr/local/bin/graphitewrapper.sh might look like this:
+/usr/local/bin/graphitewrapper.sh might look like this ::
 
-```
-#!/bin/sh
-# http://binblog.info/2008/10/20/openssh-going-flexible-with-forced-commands/
-case "$SSH_ORIGINAL_COMMAND" in
+
+    #!/bin/sh
+    # http://binblog.info/2008/10/20/openssh-going-flexible-with-forced-commands/
+    case "$SSH_ORIGINAL_COMMAND" in
         "varnishstat -x")
                 varnishstat -x
                 ;;
@@ -64,8 +64,8 @@ case "$SSH_ORIGINAL_COMMAND" in
         *)
                 exit 1
                 ;;
-esac
-```
+    esac
+
 
 
 To install the PyVarnish package
@@ -83,21 +83,21 @@ sudo pip install https://github.com/redsnapper8t8/pyvarnish/zipball/master
 
 or simply download to a local directory and run from there.
 
-Once installed you need to edit the setup.py
+Once installed you need to edit the setup.py ::
 
-```
-VARNISH_SERVERS = ('server1', "server2",)
-SSH_CONFIG = "/home/username/.ssh/config"
-DEBUG = True
-CARBON_SERVER = 'localhost'
-CARBON_PORT = 2003
-```
 
-Replace server1, server2 etc with the hostnames of your own varnish servers
-SSH_CONFIG needs to refer to your .ssh/config file
-CARBON_SERVER and CARBON_PORT should refer to your graphite server.
+    VARNISH_SERVERS = ('server1', "server2",)
+    SSH_CONFIG = "/home/username/.ssh/config"
+    DEBUG = True
+    CARBON_SERVER = 'localhost'
+    CARBON_PORT = 2003
 
-create a script that runs from crontab to run parse_stats.py
+
+* Replace server1, server2 etc with the hostnames of your own varnish servers
+* SSH_CONFIG needs to refer to your .ssh/config file
+* CARBON_SERVER and CARBON_PORT should refer to your graphite server.
+
+Then create a script that runs from crontab to run parse_stats.py
 
 
 
