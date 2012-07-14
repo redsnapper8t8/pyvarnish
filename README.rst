@@ -71,15 +71,9 @@ varnish server.
 To install the PyVarnish package
 --------------------------------
 
-from PyPi
----------
+from github ::
 
-pip install pyvarnish
-
-from github
------------
-
-sudo pip install https://github.com/redsnapper8t8/pyvarnish/zipball/master
+    pip install https://github.com/redsnapper8t8/pyvarnish/zipball/master
 
 or simply download to a local directory and run from there.
 
