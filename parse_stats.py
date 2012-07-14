@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 __author__ = 'John Moylan'
-__version__ = 0.5
-import select
-import time
+__version__ = 0.6
+
 import time
 from StringIO import StringIO
 import socket
 
 from lxml import etree
 
-from settings import CARBON_SERVER, CARBON_PORT, VARNISH_SERVERS
+from settings import CARBON_SERVER, CARBON_PORT, VARNISH_SERVERS, DEBUG
 from remote import Varnish_admin
 
 
@@ -30,17 +29,21 @@ class VarnishGather():
         for node in root:
             for stat in  node:
                 if stat.tag == "name" and stat.getnext().tag == "value":
-                    self.lines.append('varnish.%s.%s %s %d' % (self.server_name, stat.text,
-                            stat.getnext().text, int(epochstamp)))
+                    self.lines.append('varnish.%s.%s %s %d' % (self.server_name,
+                                                               stat.text,
+                                                               stat.getnext().text,
+                                                               int(epochstamp)))
 
     def parse_sysctl(self, input):
         epochstamp = int(time.time())
-        key = "varnish.%s.%s_current" % (self.server_name, input.split()[0].replace('.','_'))
+        key = "varnish.%s.%s_current" % (
+            self.server_name, input.split()[0].replace('.','_'))
         value = input.split()[2]
         #append current useage
         self.lines.append("%s %s %d" % (key, value, epochstamp))
 
-        key = "varnish.%s.%s_total" % (self.server_name, input.split()[0].replace('.','_'))
+        key = "varnish.%s.%s_total" % (
+            self.server_name, input.split()[0].replace('.','_'))
         value = input.split()[4]
         #append total useage
         self.lines.append("%s %s %d" % (key, value, epochstamp))
@@ -56,19 +59,27 @@ def msg(message):
 def main():
 
     for server in VARNISH_SERVERS:
-        #connect to server
-        vserver = Varnish_admin(server)
-
-        #run command
-        data = vserver.runcmd("varnishstat -x")
+        try:
+            #connect to server
+            vserver = Varnish_admin(server)
+            data = vserver.runcmd("varnishstat -x")
+        except:
+            continue
 
         #print data
         xml = StringIO(data)
 
+        if DEBUG:
+            print data
+            print server
+
         vg = VarnishGather(server)
 
         #parseXML
-        vg.parse_xml(xml)
+        try:
+            vg.parse_xml(xml)
+        except etree.XMLSyntaxError:
+            break
 
         #get fildescriptors counter
         vg.parse_sysctl(vserver.runcmd("sysctl fs.file-nr"))
@@ -77,7 +88,7 @@ def main():
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
             for i in range(0, len(vg.lines), 50):
-                sock.sendto( msg(vg.lines[i:i+50]), (CARBON_SERVER, CARBON_PORT) )
+                sock.sendto( msg(vg.lines[i:i+50]), (CARBON_SERVER, CARBON_PORT))
         except:
             import sys, traceback
             print "failed"
