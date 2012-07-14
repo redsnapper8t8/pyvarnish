@@ -9,7 +9,7 @@ import socket
 from lxml import etree
 
 from settings import CARBON_SERVER, CARBON_PORT, VARNISH_SERVERS, DEBUG
-from remote import Varnish_admin
+from pyvarnish.remote import Varnish_admin
 
 
 class VarnishGather():
