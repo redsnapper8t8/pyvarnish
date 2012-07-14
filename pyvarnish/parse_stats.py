@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-__author__ = 'John Moylan'
-__version__ = 0.6
+#!/usr/bin/env python
 
 import time
 from StringIO import StringIO
