@@ -2,7 +2,7 @@
 __author__ = 'John Moylan'
 from paramiko import SSHClient, SSHConfig, AutoAddPolicy
 
-from settings import SSH_CONFIG
+from pyvarnish.settings import SSH_CONFIG
 
 
 class Varnish_admin():

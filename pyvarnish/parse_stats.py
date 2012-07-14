@@ -8,7 +8,7 @@ import socket
 
 from lxml import etree
 
-from settings import CARBON_SERVER, CARBON_PORT, VARNISH_SERVERS, DEBUG
+from pyvarnish.settings import CARBON_SERVER, CARBON_PORT, VARNISH_SERVERS, DEBUG
 from pyvarnish.remote import Varnish_admin
 
 
