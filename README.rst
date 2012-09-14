@@ -21,7 +21,7 @@ Resources
 ---------
 
 * `Bug Tracker <http://github.com/redsnapper8t8/pyvarnish/issues>`_
-* `Code <http://github.com/redsnapper8t8/pyvarnish/issues>`_
+* `Code <http://github.com/redsnapper8t8/pyvarnish>`_
 * `My Blog <http://www.8t8.eu>`_
 
 
@@ -77,7 +77,7 @@ from github ::
 
 or simply download to a local directory and run from there.
 
-Once installed you need to edit the setup.py ::
+Once installed you need to edit settings.py ::
 
 
     VARNISH_SERVERS = ('server1', "server2",)
@@ -92,6 +92,4 @@ Once installed you need to edit the setup.py ::
 * CARBON_SERVER and CARBON_PORT should refer to your graphite server.
 
 Then create a script that runs from crontab to run parse_stats.py
-
-
 
