@@ -2,6 +2,7 @@
 #!/usr/bin/env python
 
 import time
+from traceback import format_exc
 from StringIO import StringIO
 import socket
 
@@ -58,19 +59,25 @@ def msg(message):
 def main():
 
     for server in VARNISH_SERVERS:
+        if DEBUG:
+            print 'Connecting to Varnish server at %s...' % server
         try:
             #connect to server
             vserver = Varnish_admin(server)
             data = vserver.runcmd("varnishstat -x")
-        except:
+        except Exception:
+            if DEBUG:
+                print "Whoops, that didn't work.  Here's the exception:"
+                print format_exc()
+                print "Continuing on to the next server..."
             continue
 
         #print data
         xml = StringIO(data)
 
         if DEBUG:
+            print "Here's the data we got:"
             print data
-            print server
 
         vg = VarnishGather(server)
 
@@ -94,6 +101,8 @@ def main():
             traceback.print_exc(file=sys.stdout)
         finally:
             sock.close()
+    if DEBUG:
+        print 'All done!'
 
 
 if __name__ == "__main__":
