@@ -12,7 +12,14 @@ class Varnish_admin():
 
     def __init__(self, server=''):
         self.server = server
-        self.conf = self.config()
+        self.conf = {
+            'hostname': server,
+            'port': 22,
+            # If these are None, Paramiko will figure out the correct values.
+            'user': None,
+            'identityfile': None,
+        }
+        self.conf.update(self.config())
 
     def config(self):
         sshconfig = SSHConfig()
@@ -22,7 +29,11 @@ class Varnish_admin():
             print "your app needs to have a valid " \
                   "ssh config file location in settings.py"
             sys.exit(1)
-        return sshconfig.lookup(self.server)
+        conf = sshconfig.lookup(self.server)
+        if 'port' in conf:
+            conf['port'] = int(conf['port'])
+        
+        return conf
 
     def runcmd(self, cmd):
         try:
@@ -30,11 +41,11 @@ class Varnish_admin():
             client.load_system_host_keys()
             client.set_missing_host_key_policy(AutoAddPolicy())
             client.connect(self.conf['hostname'],
-                            port = int(self.conf['port']),
+                            port = self.conf['port'],
                             username = self.conf['user'],
-                            key_filename = self.conf['identityfile'],
-                            password = None,)
+                            key_filename = self.conf['identityfile'],)
             stdin, stdout, stderr = client.exec_command(cmd)
             return ''.join([i.rstrip('\r\n ').lstrip() for i in stdout.readlines()])
         finally:
             client.close()
+
