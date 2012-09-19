@@ -18,6 +18,10 @@ setup(
             'pyvarnish = pyvarnish.parse_stats:main',
         ],
     },
+    install_requires = [
+        'lxml',
+        'paramiko',
+    ],
     classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Console',
