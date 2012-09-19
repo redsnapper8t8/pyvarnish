@@ -3,3 +3,6 @@
 *.pyo
 *.pyc
 *~
+build
+dist
+pyvarnish.egg-info
