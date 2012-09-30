@@ -25,9 +25,7 @@ class Varnish_admin():
         try:
             sshconfig.parse(open(SSH_CONFIG))
         except IOError:
-            print "your app needs to have a valid " \
-                  "ssh config file location in settings.py"
-            sys.exit(1)
+            sys.stderr.write("Warning: SSH config file location invalid.\n")
         conf = sshconfig.lookup(self.server)
         if 'port' in conf:
             conf['port'] = int(conf['port'])
