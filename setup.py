@@ -13,7 +13,16 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    classifiers=[
+    entry_points = {
+        'console_scripts': [
+            'pyvarnish = pyvarnish.parse_stats:main',
+        ],
+    },
+    install_requires = [
+        'lxml',
+        'paramiko',
+    ],
+    classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: System Administrators',
@@ -21,5 +30,5 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        ]
+    ]
 )

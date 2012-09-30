@@ -1,5 +1,3 @@
-__author__ = 'john'
-
 import unittest
 
 from pyvarnish.parse_stats import VarnishGather, msg
