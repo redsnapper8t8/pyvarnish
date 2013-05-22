@@ -71,6 +71,9 @@ varnish server.
 To install the PyVarnish package
 --------------------------------
 
+Install PyVarnish on a management server with SSH access to your Varnish boxes. 
+The Management server need to have direct access to your graphite server over UDP.
+
 from github ::
 
     pip install https://github.com/redsnapper8t8/pyvarnish/zipball/master
@@ -91,5 +94,6 @@ Once installed you need to edit settings.py ::
 * SSH_CONFIG needs to refer to your .ssh/config file
 * CARBON_SERVER and CARBON_PORT should refer to your graphite server.
 
-Then create a script that runs from crontab to run parse_stats.py
+On each of your Varnish servers:
+Create a script that runs from crontab to run parse_stats.py
 
